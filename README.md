@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿
 ## 🚀 Overview
 
@@ -40,3 +41,7 @@ The live deployment of this project can be found at:
 
 ### Payment Approval Popup
 <img src="./screenshots/popup-admin-approve-reject-payment.png" width="100%" />
+=======
+# atifaslam
+Here is a punchy, 350-character version for a quick LinkedIn update:  I cloned the Ticket Wala site to build a better, more interactive version. Using PHP and SQLite, I created ZeeshanEvents Terminal, featuring an interactive seating map, a secure Admin portal with 2FA OTP, and automated PDF ticket dispatch via email. A hobby project.
+>>>>>>> c3fafbe0e346e2551e410e52f56986e6c5bc0c7b
