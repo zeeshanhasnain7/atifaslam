@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeeshanEvents - Atif Aslam Live Concert</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#e11d48',
+                            dark: '#000000',
+                            darker: '#0a0a0a',
+                            accent: '#10b981', // Green from the screenshot
+                            ticketborder: '#27272a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="text-slate-200 font-sans min-h-screen flex flex-col pb-24 bg-black overflow-x-hidden">
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar"
+        class="fixed top-0 right-0 h-full w-full sm:w-96 bg-brand-darker z-[60] transform translate-x-full transition-transform duration-500 ease-in-out border-l border-brand-ticketborder shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-brand-ticketborder flex justify-between items-center bg-black">
+            <h2 class="text-xl font-bold text-white uppercase tracking-tight">Order Checkout</h2>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4">
+            <!-- Items populated by JS -->
+        </div>
+        <div class="p-6 bg-black border-t border-brand-ticketborder space-y-4">
+            <div class="flex justify-between items-end">
+                <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Amount</span>
+                <span id="cart-total-price" class="text-4xl font-extrabold text-white tracking-tighter">Rs 0</span>
+            </div>
+            <button onclick="openCheckout()"
+                class="w-full bg-brand-accent hover:bg-emerald-400 text-black py-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(16,185,129,0.3)] transition transform active:scale-95">
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
+    <div id="cart-overlay" onclick="toggleCart()"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] opacity-0 pointer-events-none transition-opacity duration-500">
+    </div>
+
+
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-black border-b border-slate-900">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 flex items-center justify-center font-bold text-white border border-white p-1">
+                        <span class="text-sm leading-none">ZE</span>
+                    </div>
+                    <span class="font-normal text-white text-lg tracking-tighter uppercase">ZeeshanEvents</span>
+                </div>
+
+                <!-- Desktop Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#"
+                        class="text-slate-300 hover:text-white text-xs font-medium uppercase tracking-wide">Explore</a>
+                    <a href="#" class="text-slate-300 hover:text-white text-xs font-medium uppercase tracking-wide">Atif
+                        Cashings</a>
+                    <a href="#"
+                        class="text-slate-300 hover:text-white text-xs font-medium uppercase tracking-wide">Event
+                        Management</a>
+                    <button
+                        class="bg-brand-accent text-black px-4 py-1.5 rounded-md text-xs font-bold transition hover:bg-emerald-400">
+                        Host Your Event
+                    </button>
+                </div>
+
+                <!-- Right Actions & Cart -->
+                <div class="flex items-center gap-4">
+                    <svg class="hidden md:block w-5 h-5 text-slate-300 hover:text-white cursor-pointer transition"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <!-- Cart Bag Icon -->
+                    <div onclick="toggleCart()" class="relative flex items-center justify-center cursor-pointer group">
+                        <svg class="w-6 h-6 text-slate-300 group-hover:text-white transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        <span id="cart-badge"
+                            class="absolute -top-1.5 -right-2 bg-brand-accent text-black text-[10px] font-extrabold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 pt-24 space-y-4">
+
+        <!-- Hero Banner -->
+        <div
+            class="w-full rounded-2xl overflow-hidden border border-brand-ticketborder border-b-4 border-b-brand-ticketborder relative group">
+            <img src="img/banner.jpg" alt="Atif Aslam Banner" class="w-full h-auto object-cover aspect-[21/9]">
+        </div>
+
+        <!-- Info Bars -->
+        <div class="space-y-3">
+            <div class="w-full bg-brand-darker border border-brand-accent py-2.5 rounded-full text-center">
+                <h1 class="text-brand-accent font-bold text-sm tracking-widest uppercase">Atif Aslam Live - Triwah
+                    Events</h1>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="w-full bg-brand-darker border border-brand-ticketborder py-2.5 rounded-full text-center">
+                    <span class="text-brand-accent font-semibold text-sm">08 May 2026</span>
+                </div>
+                <div class="w-full bg-brand-darker border border-brand-ticketborder py-2.5 rounded-full text-center">
+                    <span class="text-brand-accent font-semibold text-sm">08:00 pm</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-brand-darker border border-brand-ticketborder py-2.5 rounded-full text-center px-4">
+                <span class="text-brand-accent font-semibold text-sm truncate block">DHA Sports Club, Moin Khan Academy,
+                    Karachi</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="grid grid-cols-3 gap-3 pt-2">
+            <button
+                class="bg-brand-accent text-black font-bold py-2 rounded-full text-sm shadow-[0_0_10px_rgba(16,185,129,0.3)]">Tickets</button>
+            <button
+                class="bg-white text-black font-bold py-2 rounded-full text-sm hover:bg-slate-200 transition">Description</button>
+            <button
+                class="bg-white text-black font-bold py-2 rounded-full text-sm hover:bg-slate-200 transition">Location</button>
+        </div>
+
+        <!-- Interactive Map & Ticket Container -->
+        <div class="w-full bg-brand-darker border border-brand-ticketborder rounded-2xl overflow-hidden mt-4">
+
+            <!-- Map Header -->
+            <div
+                class="w-full p-4 pb-0 flex justify-between items-center text-brand-accent text-sm font-bold uppercase tracking-wider px-6">
+                <span>Atif Aslam Live - Select on Map</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+
+            <!-- Enhanced Interactive Map Section (Zoomed & Cropped) -->
+            <div
+                class="w-full overflow-hidden bg-brand-darker mt-2 flex justify-center border-b border-brand-ticketborder relative">
+                <!-- Using negative margins & scaled width to remove image side negative space -->
+                <div
+                    class="relative w-[130%] -left-[15%] sm:w-[110%] sm:-left-[5%] transition-all duration-500 origin-center select-none">
+                    <img src="img/map.png" alt="Seating Map" class="w-full h-auto object-cover pointer-events-none">
+
+                    <!-- Hotspots Container - Rendered by JS -->
+                    <div id="hotspots-container" class="absolute inset-0 w-full h-full"></div>
+
+                    <!-- Spot Labels Container -->
+                    <div id="spot-labels" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+                </div>
+            </div>
+
+            <!-- Ticket List Section -->
+            <div id="ticket-container" class="flex flex-col divide-y divide-brand-ticketborder p-4">
+                <!-- Javascript will render ticket rows here -->
+            </div>
+        </div>
+
+        <!-- More Events Section -->
+        <div class="pt-8 w-full bg-brand-darker border border-brand-ticketborder rounded-2xl p-4">
+            <h2 class="text-brand-accent font-bold text-center uppercase tracking-widest text-sm mb-6">More Events Like
+                This</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <img src="img/event6.png" alt="Humpday Comedy" class="w-full aspect-video object-cover">
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">Humpday Comedy Night - Stand up Comedy Mic</h3>
+                        <p class="text-xs text-slate-500 mt-1">11 days ago</p>
+                    </div>
+                </a>
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <div class="w-full aspect-video flex justify-center bg-zinc-900 relative">
+                        <img src="img/event2.jpg" alt="Begum Jaan" class="w-full h-full object-cover opacity-30">
+                        <div class="absolute inset-0 flex items-center justify-center p-4 text-center">
+                            <span class="text-white font-bold text-xl uppercase tracking-widest">The Amazing
+                                Event</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">The Amazing Event</h3>
+                        <p class="text-xs text-slate-500 mt-1">20 days ago</p>
+                    </div>
+                </a>
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <img src="img/event4.png" alt="Open Decks" class="w-full aspect-video object-cover">
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">Open Decks by The Jungle PK</h3>
+                        <p class="text-xs text-slate-500 mt-1">26 days ago</p>
+                    </div>
+                </a>
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <img src="img/event3.png" alt="Strait From Hormones" class="w-full aspect-video object-cover">
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">Strait From Hormones</h3>
+                        <p class="text-xs text-slate-500 mt-1">1 month ago</p>
+                    </div>
+                </a>
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <img src="img/event5.jpg" alt="Abdul Hannan" class="w-full aspect-video object-cover">
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">The Abdul Hannan Experience - Karachi</h3>
+                        <p class="text-xs text-slate-500 mt-1">1 month ago</p>
+                    </div>
+                </a>
+                <a href="#"
+                    class="bg-black rounded-xl overflow-hidden border border-brand-ticketborder group relative flex flex-col h-full">
+                    <img src="img/event2.jpg" alt="Begum Jaan" class="w-full aspect-video object-cover">
+                    <div class="p-3 bg-black">
+                        <h3 class="font-bold text-white text-sm">Begum Jaan</h3>
+                        <p class="text-xs text-slate-500 mt-1">1 month ago</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="flex justify-center mt-6">
+                <button
+                    class="bg-brand-accent text-black font-bold py-2 px-8 rounded-full text-sm hover:bg-emerald-400 transition">Load
+                    More</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-darker border-t border-brand-ticketborder mt-12 py-10">
+        <div class="container mx-auto px-4 max-w-4xl grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="flex flex-col gap-2">
+                <div class="w-10 h-10 flex items-center justify-center font-bold text-white border border-white p-1">
+                    <span class="text-xl leading-none">ZE</span>
+                </div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2 leading-tight">
+                    Tickets<br>Anytime<br>Anywhere!</p>
+            </div>
+            <div>
+                <h4 class="text-brand-accent font-bold mb-4 text-sm">Socials</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                    <li><a href="#" class="hover:text-white transition">YouTube</a></li>
+                    <li><a href="#" class="hover:text-white transition">Twitter</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-brand-accent font-bold mb-4 text-sm">TicketJis</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms</a></li>
+                    <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Refunds</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-brand-accent font-bold mb-4 text-sm">Contact</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">WhatsApp</a></li>
+                    <li><a href="#" class="hover:text-white transition">Facebook</a></li>
+                    <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky Checkout Bottom Bar -->
+    <div id="checkout-bar"
+        class="fixed bottom-0 left-0 w-full bg-brand-darker border-t border-brand-accent p-4 transform translate-y-full transition-transform duration-300 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase">Total Order</p>
+                <p class="text-2xl font-bold text-white" id="total-price">Rs 0</p>
+            </div>
+            <button id="checkout-btn" onclick="toggleCart()"
+                class="bg-brand-accent hover:bg-emerald-400 text-black px-8 py-3 rounded-full font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.3)] transition transform hover:-translate-y-1">
+                View Selection
+            </button>
+        </div>
+    </div>
+
+    <!-- Interactive Logic for Map and List -->
+    <script>
+        const tickets = [
+            { id: 't1', name: 'Royal Prime C - Early Bird', price: 2500, description: '', quantity: 0, max: 0, soldOut: true },
+            { id: 't2', name: 'Silver Enclosure - Early Bird', price: 5000, description: '', quantity: 0, max: 0, soldOut: true },
+            { id: 't3', name: 'Pink Enclosure - Early Bird', price: 8000, description: '', quantity: 0, max: 0, soldOut: true },
+            { id: 't4', name: 'Gold Enclosure - Early Bird', price: 10000, description: '', quantity: 0, max: 0, soldOut: true },
+            { id: 't5', name: 'Royal Prime - Early Bird', price: 25000, description: '', quantity: 0, max: 0, soldOut: true },
+            { id: 't6', name: 'General Enclosure', price: 5000, description: 'Gate Number 3 | Gate Path 2 | Walking Passage to the Gate...', quantity: 0, max: 10, soldOut: false },
+            { id: 't7', name: 'Pink Enclosure', price: 10000, description: 'Gate Number 12 | Middle Wing Seating', quantity: 0, max: 10, soldOut: false },
+            { id: 't8', name: 'Silver Enclosure', price: 15000, description: 'Gate Number 10 | Mid Front Standing', quantity: 0, max: 10, soldOut: false },
+            { id: 't9', name: 'Gold Enclosure', price: 20000, description: 'Gate Number 5 | Golden View Front Standing with Access', quantity: 0, max: 10, soldOut: false },
+            { id: 't10', name: 'Royal Prime', price: 35000, description: 'Gate Number 2 | Close view Side Wing Seating | Center Stage', quantity: 0, max: 10, soldOut: false },
+            { id: 't11', name: 'Royal Signature', price: 50000, description: 'Gate Number 1 | Premium Close View Seating | Parking Slot Included', quantity: 0, max: 0, soldOut: true }
+        ];
+
+        // Coordinate definitions (SVG Paths) for accurate shape tracing
+        const mapZones = [
+            { id: 't7', name: 'Pink', d: 'M 23 44 L 33 44 L 33 59 L 23 59 Z', tooltipPos: { top: '51.5%', left: '28%' } },
+            { id: 't8', name: 'Silver', d: 'M 33.5 44 L 70 44 Q 76 44 76 52 Q 76 60 70 60 L 33.5 60 Z', tooltipPos: { top: '52%', left: '54.5%' } },
+            { id: 't9', name: 'Gold', d: 'M 26 32 L 72 32 Q 75 32 75 36.5 Q 75 41 72 41 L 26 41 Q 23.5 41 23.5 36.5 Q 23.5 32 26 32 Z', tooltipPos: { top: '36.5%', left: '49%' } },
+            { id: 't11', name: 'Royal Signature L', d: 'M 36.5 19.5 L 45 19.5 L 44 29.5 L 37.5 29.5 Z', tooltipPos: { top: '24.5%', left: '40%' } },
+            { id: 't11', name: 'Royal Signature R', d: 'M 53.5 19.5 L 62 19.5 L 61 29.5 L 54.5 29.5 Z', tooltipPos: { top: '24.5%', left: '58%' } },
+            { id: 't10', name: 'Royal Prime L', d: 'M 27 19.5 L 35 19.5 L 35 29.5 L 25 29.5 Z', tooltipPos: { top: '24.5%', left: '30%' } },
+            { id: 't10', name: 'Royal Prime R', d: 'M 63.5 19.5 L 71.5 19.5 L 73.5 29.5 L 63.5 29.5 Z', tooltipPos: { top: '24.5%', left: '68.5%' } },
+            { id: 't6', name: 'General L', d: 'M 27 62 L 47 62 L 47 68 Q 37 72 27 71 Z', tooltipPos: { top: '66.5%', left: '37%' } },
+            { id: 't6', name: 'General R', d: 'M 54 62 L 74 62 L 74 71 Q 64 72 54 68 Z', tooltipPos: { top: '66.5%', left: '64%' } }
+        ];
+
+        const listContainer = document.getElementById('ticket-container');
+        const mapContainer = document.getElementById('hotspots-container');
+        const spotLabels = document.getElementById('spot-labels');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotalPrice = document.getElementById('cart-total-price');
+        const checkoutBar = document.getElementById('checkout-bar');
+        const totalPriceEl = document.getElementById('total-price');
+        const cartBadge = document.getElementById('cart-badge');
+
+        const formatCurrency = (num) => 'Rs ' + num.toLocaleString('en-PK');
+
+        let isListInitialized = false;
+        let isMapInitialized = false;
+
+        // Central UI Update function
+        const updateUI = () => {
+            renderList();
+            renderMapZones();
+            renderSpotLabels();
+            renderCartSidebar();
+            updateTotals();
+        };
+
+        // Toggle sliding cart
+        window.toggleCart = () => {
+            const isOpen = !cartSidebar.classList.contains('translate-x-full');
+            if (isOpen) {
+                cartSidebar.classList.add('translate-x-full');
+                cartOverlay.classList.remove('opacity-100');
+                cartOverlay.classList.add('pointer-events-none', 'opacity-0');
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                cartSidebar.classList.remove('translate-x-full');
+                cartOverlay.classList.add('opacity-100');
+                cartOverlay.classList.remove('pointer-events-none', 'opacity-0');
+                document.body.classList.add('overflow-hidden');
+            }
+        };
+
+        // Open Checkout Page
+        window.openCheckout = () => {
+            const activeTickets = tickets.filter(t => t.quantity > 0);
+            if (activeTickets.length === 0) return;
+
+            const cartData = {
+                tickets: activeTickets.map(t => ({
+                    id: t.id,
+                    name: t.name,
+                    price: t.price,
+                    qty: t.quantity
+                })),
+                total: tickets.reduce((sum, t) => sum + (t.price * t.quantity), 0)
+            };
+
+            // Persist to localStorage for the next page
+            localStorage.setItem('cart_data', JSON.stringify(cartData));
+            window.location.href = 'checkout.php';
+        };
+
+        // Render the traditional list view but safely updates to avoid removing active CSS focus/hover states
+        const renderList = () => {
+            if (!isListInitialized) {
+                listContainer.innerHTML = '';
+
+                tickets.forEach((ticket, index) => {
+                    const descHtml = ticket.description ? `<p class="text-[10px] text-slate-500 mt-1 leading-tight line-clamp-2 pr-4">${ticket.description}</p>` : '';
+
+                    let controlHtml = '';
+                    if (ticket.soldOut) {
+                        controlHtml = `<span class="bg-brand-red text-white text-[10px] font-bold uppercase px-3 py-1.5 rounded w-20 text-center">Sold Out</span>`;
+                    } else {
+                        controlHtml = `<div class="flex items-center bg-black rounded-full border border-slate-700">
+                                <button id="list-minus-${index}" onclick="updateQty('${ticket.id}', -1, event)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition disabled:opacity-30">-</button>
+                                <span id="list-qty-${index}" class="w-4 text-center font-bold text-white text-sm">0</span>
+                                <button id="list-plus-${index}" onclick="updateQty('${ticket.id}', 1, event)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition disabled:opacity-30">+</button>
+                           </div>`;
+                    }
+
+                    const rowHtml = `
+                        <div id="list-row-${index}" class="flex justify-between items-center py-4 px-2 transition rounded-lg border border-transparent">
+                            <div class="w-1/2 md:w-3/5">
+                                <h3 class="font-bold text-white text-xs sm:text-sm truncate">${ticket.name}</h3>
+                                ${descHtml}
+                            </div>
+                            <div class="w-1/4 md:w-1/5 text-center">
+                                <span class="font-bold text-white text-xs sm:text-sm whitespace-nowrap">${formatCurrency(ticket.price)}</span>
+                            </div>
+                            <div class="w-1/4 md:w-1/5 flex justify-end">
+                                ${controlHtml}
+                            </div>
+                        </div>
+                    `;
+                    listContainer.innerHTML += rowHtml;
+                });
+                isListInitialized = true;
+            }
+
+            // Safe update sequence - we update values instead of replacing HTML inner contents completely
+            tickets.forEach((ticket, index) => {
+                const rowEl = document.getElementById(`list-row-${index}`);
+                if (rowEl) {
+                    const bgClass = ticket.quantity > 0 ? 'bg-brand-accent/5 border-brand-accent/30' : 'hover:bg-slate-900/50 border-transparent';
+                    rowEl.className = `flex justify-between items-center py-4 px-2 transition rounded-lg border ${bgClass}`;
+                }
+
+                if (!ticket.soldOut) {
+                    const btnMinus = document.getElementById(`list-minus-${index}`);
+                    const btnPlus = document.getElementById(`list-plus-${index}`);
+                    const listQty = document.getElementById(`list-qty-${index}`);
+
+                    if (btnMinus && btnPlus && listQty) {
+                        listQty.textContent = ticket.quantity;
+                        btnMinus.disabled = ticket.quantity === 0;
+                        btnPlus.disabled = ticket.quantity >= ticket.max;
+                    }
+                }
+            });
+        };
+
+        // Tooltip visibility helpers
+        const showTooltip = (index) => {
+            const tooltip = document.getElementById(`tooltip-${index}`);
+            const path = document.getElementById(`path-${index}`);
+            if (tooltip && path) {
+                tooltip.classList.add('opacity-100', 'scale-100');
+                tooltip.style.pointerEvents = 'auto';
+
+                const ticket = tickets.find(t => t.id === mapZones[index].id);
+                if (ticket.soldOut) {
+                    path.style.fill = 'rgba(225, 29, 72, 0.2)';
+                    path.style.stroke = 'rgba(225, 29, 72, 0.5)';
+                } else if (ticket.quantity === 0) {
+                    path.style.fill = 'rgba(16, 185, 129, 0.2)';
+                    path.style.stroke = 'rgba(16, 185, 129, 0.5)';
+                }
+            }
+        };
+
+        const hideTooltip = (index) => {
+            const tooltip = document.getElementById(`tooltip-${index}`);
+            const path = document.getElementById(`path-${index}`);
+            if (tooltip && path) {
+                setTimeout(() => {
+                    if (!tooltip.matches(':hover')) {
+                        tooltip.classList.remove('opacity-100', 'scale-100');
+                        tooltip.style.pointerEvents = 'none';
+
+                        const ticket = tickets.find(t => t.id === mapZones[index].id);
+                        if (ticket.quantity === 0) {
+                            path.style.fill = 'transparent';
+                            path.style.stroke = 'transparent';
+                        } else {
+                            // Restore selected state
+                            if (ticket.soldOut) {
+                                path.style.fill = 'rgba(225, 29, 72, 0.4)';
+                                path.style.stroke = 'rgba(225, 29, 72, 1)';
+                            } else {
+                                path.style.fill = 'rgba(16, 185, 129, 0.6)'; // High opacity for selected
+                                path.style.stroke = 'rgba(16, 185, 129, 1)';
+                            }
+                        }
+                    }
+                }, 100);
+            }
+        };
+
+        // Render the interactive overlay zones on the map using SVG for precise tracing
+        const renderMapZones = () => {
+            if (!isMapInitialized) {
+                mapContainer.innerHTML = `
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full">
+                        <g id="svg-zones"></g>
+                    </svg>
+                    <div id="tooltips-overlay" class="absolute inset-0 pointer-events-none"></div>
+                `;
+                const svgZones = document.getElementById('svg-zones');
+                const tooltipsOverlay = document.getElementById('tooltips-overlay');
+
+                mapZones.forEach((zone, index) => {
+                    const ticket = tickets.find(t => t.id === zone.id);
+                    if (!ticket) return;
+
+                    const isSoldOut = ticket.soldOut;
+
+                    // Create SVG Path for exact shape tracing
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("id", `path-${index}`);
+                    path.setAttribute("d", zone.d);
+                    path.setAttribute("class", "cursor-pointer transition-all duration-300");
+                    path.style.fill = 'transparent';
+                    path.style.stroke = 'transparent';
+                    path.style.strokeWidth = '0.5';
+                    path.style.pointerEvents = 'auto';
+
+                    path.addEventListener('mouseenter', () => showTooltip(index));
+                    path.addEventListener('mouseleave', () => hideTooltip(index));
+
+                    svgZones.appendChild(path);
+
+                    let controlHtml = '';
+                    if (isSoldOut) {
+                        controlHtml = `<span class="bg-brand-red text-white text-[9px] font-bold uppercase px-2 py-1 mt-1 rounded w-full text-center">Sold Out</span>`;
+                    } else {
+                        controlHtml = `
+                            <div class="flex items-center bg-black rounded-full border border-slate-700 w-full mt-2 overflow-hidden shadow-inner">
+                                <button id="btn-minus-${index}" onclick="updateQty('${ticket.id}', -1, event)" class="flex-1 py-1 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition disabled:opacity-30 disabled:hover:bg-slate-800">-</button>
+                                <span id="tt-qty-${index}" class="w-6 text-center font-bold text-white text-xs select-none">0</span>
+                                <button id="btn-plus-${index}" onclick="updateQty('${ticket.id}', 1, event)" class="flex-1 py-1 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition disabled:opacity-30 disabled:hover:bg-slate-800">+</button>
+                            </div>
+                         `;
+                    }
+
+                    const tooltip = document.createElement('div');
+                    tooltip.id = `tooltip-${index}`;
+                    tooltip.className = "absolute opacity-0 pointer-events-none transition-all duration-200 z-20 w-36 bg-slate-900/95 backdrop-blur-md border border-brand-ticketborder rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] p-3 flex flex-col items-center scale-90 origin-center";
+                    tooltip.style.top = zone.tooltipPos.top;
+                    tooltip.style.left = zone.tooltipPos.left;
+                    tooltip.style.transform = "translate(-50%, -50%) scale(0.9)";
+
+                    tooltip.innerHTML = `
+                        <div id="sel-${index}" class="w-full flex flex-col items-center justify-center opacity-0 transition-opacity pointer-events-none mb-1">
+                            <span id="qty-text-${index}" class="text-white font-bold text-[9px] sm:text-[11px] leading-tight whitespace-nowrap drop-shadow-md"></span>
+                            <span id="price-text-${index}" class="text-brand-accent font-bold text-[9px] sm:text-[11px] leading-tight whitespace-nowrap drop-shadow-md"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-white text-center leading-tight mb-1">${ticket.name}</span>
+                        <span class="text-xs text-brand-accent font-extrabold">${formatCurrency(ticket.price)}</span>
+                        ${controlHtml}
+                    `;
+
+                    tooltip.addEventListener('mouseenter', () => {
+                        tooltip.classList.add('opacity-100', 'scale-100');
+                        tooltip.style.pointerEvents = 'auto';
+                    });
+                    tooltip.addEventListener('mouseleave', () => {
+                        tooltip.classList.remove('opacity-100', 'scale-100');
+                        tooltip.style.pointerEvents = 'none';
+                        hideTooltip(index);
+                    });
+
+                    tooltipsOverlay.appendChild(tooltip);
+                });
+                isMapInitialized = true;
+            }
+
+            // Update routine to sync state with visuals
+            mapZones.forEach((zone, index) => {
+                const ticket = tickets.find(t => t.id === zone.id);
+                if (!ticket) return;
+
+                const isSoldOut = ticket.soldOut;
+                const isSelected = ticket.quantity > 0;
+                const path = document.getElementById(`path-${index}`);
+
+                if (path) {
+                    if (isSelected) {
+                        if (isSoldOut) {
+                            path.style.fill = 'rgba(225, 29, 72, 0.4)';
+                            path.style.stroke = 'rgba(225, 29, 72, 1)';
+                        } else {
+                            path.style.fill = 'rgba(16, 185, 129, 0.6)'; // High opacity fill for tracing
+                            path.style.stroke = 'rgba(16, 185, 129, 1)';
+                            path.style.filter = 'drop-shadow(0 0 5px rgba(16, 185, 129, 0.3))';
+                        }
+                    } else {
+                        path.style.fill = 'transparent';
+                        path.style.stroke = 'transparent';
+                        path.style.filter = 'none';
+                    }
+                }
+
+                const selEl = document.getElementById(`sel-${index}`);
+                if (selEl) {
+                    if (isSelected) {
+                        selEl.classList.remove('opacity-0');
+                        selEl.classList.add('opacity-100');
+                        document.getElementById(`qty-text-${index}`).textContent = `${ticket.quantity} ticket(s)`;
+                        document.getElementById(`price-text-${index}`).textContent = `${(ticket.quantity * ticket.price).toLocaleString('en-PK')} pkr`;
+                    } else {
+                        selEl.classList.add('opacity-0');
+                        selEl.classList.remove('opacity-100');
+                    }
+                }
+
+                if (!isSoldOut) {
+                    const btnMinus = document.getElementById(`btn-minus-${index}`);
+                    const btnPlus = document.getElementById(`btn-plus-${index}`);
+                    const ttQty = document.getElementById(`tt-qty-${index}`);
+
+                    if (btnMinus && btnPlus && ttQty) {
+                        ttQty.textContent = ticket.quantity;
+                        btnMinus.disabled = ticket.quantity === 0;
+                        btnPlus.disabled = ticket.quantity >= ticket.max;
+                    }
+                }
+            });
+        };
+
+        // Shared function logic triggered from Map OR List
+        window.updateQty = (id, delta, event) => {
+            // Prevent triggering map click boundaries when interacting with buttons
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket || ticket.soldOut) return;
+
+            const newQty = ticket.quantity + delta;
+            if (newQty >= 0 && newQty <= ticket.max) {
+                ticket.quantity = newQty;
+                updateUI(); // Refreshes List, Map visuals, and Totals
+            }
+        };
+
+        // Render small labels directly on the map for selected spots
+        const renderSpotLabels = () => {
+            spotLabels.innerHTML = '';
+            mapZones.forEach((zone, index) => {
+                const ticket = tickets.find(t => t.id === zone.id);
+                if (ticket && ticket.quantity > 0) {
+                    const label = document.createElement('div');
+                    label.className = "absolute flex flex-col items-center justify-center text-center leading-none";
+                    label.style.top = zone.tooltipPos.top;
+                    label.style.left = zone.tooltipPos.left;
+                    label.style.transform = "translate(-50%, -50%)";
+
+                    label.innerHTML = `
+                        <p class="text-[7px] sm:text-[9px] font-extrabold text-white drop-shadow-md uppercase tracking-tighter">${ticket.quantity} Ticket${ticket.quantity > 1 ? 's' : ''}</p>
+                        <p class="text-[7px] sm:text-[9px] font-bold text-brand-accent drop-shadow-md tracking-tighter">${(ticket.quantity * ticket.price).toLocaleString('en-PK')} pkr</p>
+                    `;
+                    spotLabels.appendChild(label);
+                }
+            });
+        };
+
+        // Render sliding cart sidebar items
+        const renderCartSidebar = () => {
+            cartItems.innerHTML = '';
+            const activeTickets = tickets.filter(t => t.quantity > 0);
+
+            if (activeTickets.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center opacity-30">
+                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <p class="font-bold uppercase text-xs">Your bag is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activeTickets.forEach((ticket) => {
+                const item = document.createElement('div');
+                item.className = "bg-black/40 border border-brand-ticketborder p-4 rounded-xl space-y-3";
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-sm font-bold text-white uppercase tracking-tight">${ticket.name}</h4>
+                            <p class="text-[10px] text-brand-accent font-bold">${formatCurrency(ticket.price)} / ticket</p>
+                        </div>
+                        <span class="text-sm font-black text-white">${formatCurrency(ticket.price * ticket.quantity)}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center bg-zinc-900 rounded-full border border-slate-700">
+                            <button onclick="updateQty('${ticket.id}', -1, event)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition">-</button>
+                            <span class="w-6 text-center font-bold text-white text-xs">${ticket.quantity}</span>
+                            <button onclick="updateQty('${ticket.id}', 1, event)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition">+</button>
+                        </div>
+                        <button onclick="updateQty('${ticket.id}', -${ticket.quantity}, event)" class="text-[10px] font-bold text-brand-red uppercase tracking-widest hover:underline">Remove</button>
+                    </div>
+                `;
+                cartItems.appendChild(item);
+            });
+        };
+
+        // Aggregates Totals & Handles Bottom Bar + Cart Navbar Icon
+        const updateTotals = () => {
+            const totalQty = tickets.reduce((sum, t) => sum + t.quantity, 0);
+            const totalPrice = tickets.reduce((sum, t) => sum + (t.price * t.quantity), 0);
+
+            totalPriceEl.textContent = formatCurrency(totalPrice);
+            cartTotalPrice.textContent = formatCurrency(totalPrice);
+
+            // Show/Hide checkout sticky bar
+            if (totalQty > 0) {
+                checkoutBar.classList.remove('translate-y-full');
+            } else {
+                checkoutBar.classList.add('translate-y-full');
+            }
+
+            // Sync Navbar Cart Icon
+            if (totalQty > 0) {
+                cartBadge.textContent = totalQty;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        };
+
+        // Initialize UI Elements safely
+        updateUI();
+    </script>
+</body>
+
+</html>

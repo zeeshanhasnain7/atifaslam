@@ -1,0 +1,12 @@
+# Security: Protect SQLite database from being downloaded
+<FilesMatch "\.sqlite$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Ensure PHP errors are hidden from public
+php_flag display_errors Off
+php_value error_reporting 0
