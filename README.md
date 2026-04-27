@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-﻿
 ## 🚀 Overview
 
 This project was inspired by a real-world observation. While browsing a ticketing website, ticketwala.pk, for an Atif Aslam concert, I noticed a major usability gap. The seating map was completely static and offered no interaction. Users could see the layout, but they could not hover over different enclosures, understand pricing visually, or select tickets directly from the map. This created a disconnect between what users see and how they actually book tickets. That gap triggered both curiosity and frustration, and I decided to rebuild the entire experience from scratch as a personal project.
@@ -41,7 +39,7 @@ The live deployment of this project can be found at:
 
 ### Payment Approval Popup
 <img src="./screenshots/popup-admin-approve-reject-payment.png" width="100%" />
+
 =======
 # atifaslam
-Here is a punchy, 350-character version for a quick LinkedIn update:  I cloned the Ticket Wala site to build a better, more interactive version. Using PHP and SQLite, I created ZeeshanEvents Terminal, featuring an interactive seating map, a secure Admin portal with 2FA OTP, and automated PDF ticket dispatch via email. A hobby project.
->>>>>>> c3fafbe0e346e2551e410e52f56986e6c5bc0c7b
+I cloned the Ticket Wala site to build a better, more interactive version. Using PHP and SQLite, I created ZeeshanEvents Terminal, featuring an interactive seating map, a secure Admin portal with 2FA OTP, and automated PDF ticket dispatch via email. A hobby project.
