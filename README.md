@@ -8,6 +8,9 @@ The system includes a complete checkout flow with OTP based verification to ensu
 
 This project goes beyond improving the user interface and focuses on solving both user experience and operational challenges in event ticketing. It brings together interactive design, backend processing, payment validation, email automation, and admin level control into one cohesive system.
 
+**IMPORTANT NOTE:**
+🔔 This project was built purely out of curiosity and as part of creating a unique portfolio experience. Please do not make any real payments through the checkout page. Neither do I own any rights to the concert or related content.
+
 The live deployment of this project can be found at:  
 [https://atifaslam.tellingcanvas.com](https://atifaslam.tellingcanvas.com)
 
